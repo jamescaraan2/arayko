@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARAY KOOOO</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0b0f1a;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    color: white;
+  }
+
+  /* 🌧️ VIDEO RAIN BACKGROUND */
+  #rainVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(2px) brightness(0.5);
+  }
+
+  /* 🌬️ FLOATING IMAGES */
+  .fly {
+    position: absolute;
+    opacity: 0.75;
+    z-index: 1;
+    animation: fly linear infinite;
+  }
+
+  @keyframes fly {
+    0% { transform: translateX(-250px) scale(0.8); }
+    100% { transform: translateX(120vw) scale(1.2); }
+  }
+
+  .f1 { top: 5%; width: 100px; animation-duration: 18s; }
+  .f2 { top: 25%; width: 140px; animation-duration: 22s; animation-delay: 3s; }
+  .f3 { bottom: 20%; width: 90px; animation-duration: 16s; animation-delay: 6s; }
+  .f4 { bottom: 5%; width: 160px; animation-duration: 24s; animation-delay: 9s; }
+
+  /* 📱 PHONE UI */
+  .phone {
+    width: 360px;
+    height: 640px;
+    background: #111;
+    border-radius: 30px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    z-index: 5;
+  }
+
+  .topbar {
+    background: #1c1f2a;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+  }
+
+  .status {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  .badge {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    display: none;
+  }
+
+  .inside-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    opacity: 0.9;
+    border-bottom: 1px solid #333;
+  }
+
+  .chat {
+    flex: 1;
+    padding: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .msg {
+    max-width: 75%;
+    padding: 8px 10px;
+    margin: 5px 0;
+    border-radius: 15px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .me { background: #2b6cff; align-self: flex-end; }
+  .them { background: #333; align-self: flex-start; }
+
+  .typing {
+    display: none;
+    align-self: flex-start;
+    background: #333;
+    padding: 8px;
+    border-radius: 15px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  .unsent {
+    display: none;
+    background: rgba(255,80,80,0.1);
+    border: 1px dashed #ff6666;
+    padding: 10px;
+    border-radius: 10px;
+    font-style: italic;
+    color: #ffb3b3;
+    margin-top: 10px;
+  }
+
+  .seen {
+    font-size: 10px;
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 5px;
+    display: none;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- 🌧️ VIDEO BACKGROUND -->
+<video autoplay muted loop id="rainVideo">
+  <source src="rain.mp4" type="video/mp4">
+</video>
+
+<!-- 🎵 MUSIC -->
+<audio autoplay loop>
+  <source src="Ben&Ben - Lifetime (Reimagined).mp3" type="audio/mpeg">
+</audio>
+
+<!-- 🌬️ FLOATING MEMORIES -->
+<img src="img (1).jpg" class="fly f1">
+<img src="img (2).jpg" class="fly f2">
+<img src="img (3).jpg" class="fly f3">
+<img src="Hallucination.jpg" class="fly f4">
+
+<div class="phone">
+
+  <div class="topbar">
+    Crush
+    <div class="status">Active now</div>
+    <div class="badge" id="badge">1</div>
+  </div>
+
+  <img src="rayko.webp" class="inside-img">
+
+  <div class="chat">
+
+    <div class="msg them">hey</div>
+    <div class="msg me">hi</div>
+    <div class="msg them">kamusta ka?</div>
+    <div class="msg me">okay lang haha</div>
+    <div class="msg them">...</div>
+
+    <div class="unsent" id="unsent">
+      I like you… more than a friend.  
+      Siguro mas mabuting hindi konalang aminin.
+    </div>
+
+    <div class="msg them">goodnight</div>
+    <div class="msg me">goodnight</div>
+
+    <div class="typing" id="typing">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+
+    <div class="seen" id="seen">Seen by her....</div>
+
+  </div>
+</div>
+
+<script>
+window.onload = () => {
+  const msgs = document.querySelectorAll(".msg");
+  const typing = document.getElementById("typing");
+  const unsent = document.getElementById("unsent");
+  const seen = document.getElementById("seen");
+  const badge = document.getElementById("badge");
+
+  let i = 0;
+
+  function showNext() {
+    if (i < msgs.length) {
+
+      typing.style.display = "block";
+
+      setTimeout(() => {
+        typing.style.display = "none";
+        msgs[i].style.display = "block";
+
+        badge.style.display = "block";
+        setTimeout(() => badge.style.display = "none", 700);
+
+        if (i === 4) {
+          setTimeout(() => {
+            unsent.style.display = "block";
+          }, 500);
+        }
+
+        i++;
+        setTimeout(showNext, 1100);
+
+      }, 1500);
+
+    } else {
+      typing.style.display = "block";
+
+      setTimeout(() => {
+        typing.style.display = "none";
+      }, 2500);
+
+      setTimeout(() => {
+        seen.style.display = "block";
+      }, 4000);
+    }
+  }
+
+  showNext();
+};
+</script>
+
+</body>
+</html>
